@@ -117,12 +117,12 @@ var
    pDevInst: DWORD;
    sDeviceID: String;
    sDevProp: String;
-   OSVer: TOSVersionInfoA;
+   OSVer: TOSVersionInfo;
    Win98Old: Boolean;
 begin
      Win98Old := False;
      OSVer.dwOSVersionInfoSize := sizeof(OSVer);
-     If GetVersionExA(OSVer) Then
+     If GetVersionEx(OSVer) Then
      begin
           If ((OSVer.dwMajorVersion = 4) And (OSVer.dwMinorVersion = 10) And (OSVer.dwBuildNumber And $FFFF < 2183)) Then
           begin
