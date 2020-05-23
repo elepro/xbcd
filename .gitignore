@@ -2,32 +2,35 @@
 # この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
 ################################################################################
 
-/Source Code/XBCD Rumble/MSVC10/.vs/XBCDR/v16
+/Source Code/XBCD Rumble/MSVC10/.vs
 /Source Code/XBCD Rumble/MSVC10/Debug x86
 /Source Code/XBCD Rumble/MSVC10/Release x86
-/Source Code/XBCD Driver/.vs/XBCD/v16
+/Source Code/XBCD Driver/.vs
 /Source Code/XBCD Driver/XBCD/x64
 /Source Code/XBCD Driver/XBCD/Release
 /Source Code/XBCD Driver/XBCD/Debug
-/Source Code/XBCD Driver/XBCD/.vs/XBCD/v16
-/.vs/xbcd/v16
+/Source Code/XBCD Driver/XBCD/.vs
 /.vs
-/Source Code/Setup Utility/Win32/Release
+/Source Code/Setup Utility/Win32
 /Source Code/Win32/Release
-/Source Code/XBCD Interface/Win32/Release
+/Source Code/XBCD Interface/Win32
 /Source Code/XBCD Interface/__history
 /Source Code/XBCD Interface/rundll32.exe
 /Source Code/XBCD Interface/rundll32_64.exe
 /Source Code/XBCD Interface/XBCDIF.identcache
 /Source Code/XBCD Interface/XBCDIF.dproj.local
+/Source Code/XBCD Interface/XBCDIF.res
 /Source Code/XBCD Driver/Release
 /Source Code/XBCD Driver/x64/Release
-/Source Code/XBCD Rumble/MSVC14/.vs/XBCDR/v16
+/Source Code/XBCD Rumble/MSVC14/.vs
 /Source Code/XBCD Rumble/MSVC14/Debug
 /Source Code/XBCD Rumble/MSVC14/Release
 /Source Code/Setup Utility/Win32/Debug
 /Source Code/Setup Utility/__history
 /Source Code/Setup Utility/XBCDSU.identcache
 /Source Code/Setup Utility/XBCDSU.dproj.local
-/Source Code/Win32/Debug
-/Source Code/XBCD Interface/Win32/Debug
+/Source Code/Win32
+/Source Code/XBCD Interface/Win32
+/Source Code/XBCD Rumble/MSVC14/XBCDR.APS
+/Source Code/XBCD Interface/Win64
+/Source Code/Win64
