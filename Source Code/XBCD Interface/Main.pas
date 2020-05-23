@@ -3,7 +3,7 @@ unit Main;
 interface
 
 uses
-  Windows, SysUtils, Hid, SetupApi;
+  Windows, SysUtils, Hid, SetupApi,Vcl.Dialogs;
 
 Type
   TReadConfig = packed record
@@ -122,7 +122,7 @@ var
 begin
      Win98Old := False;
      OSVer.dwOSVersionInfoSize := sizeof(OSVer);
-     If GetVersionEx(OSVer) Then
+     If GetVersionExA(OSVer) Then
      begin
           If ((OSVer.dwMajorVersion = 4) And (OSVer.dwMinorVersion = 10) And (OSVer.dwBuildNumber And $FFFF < 2183)) Then
           begin
@@ -199,7 +199,7 @@ begin
                                                                   Length(sDevProp),
                                                                   nil) Then
                               begin
-                                   sDevProp := Trim(sDevProp);
+                                   sDevProp := Trim(AnsiString(PAnsiChar(sDevProp)));
                                    If UpperCase(sDevProp) = 'XBCD' Then
                                    begin
                                         ParentDevInterfaceData.cbSize := sizeof(ParentDevInterfaceData);
@@ -240,7 +240,6 @@ begin
      Result := 0;
 
      FindTheHid;
-
      For iCount := 0 To iDevices-1 Do
      begin
           EnumDevice.Index := iCount;

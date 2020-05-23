@@ -2,7 +2,8 @@ library XBCDSU;
 
 uses
   Forms,
-  Main in 'Main.pas' {MainForm};
+  Main in 'Main.pas' {MainForm},
+  CAssign in 'CAssign.pas' {CAssign};
 
 {$R *.res}
 {$R WindowsXP.res}
@@ -10,7 +11,8 @@ uses
 exports
   DllGetClassObject,
   DllCanUnloadNow,
-  CPLApplet;
+  CPLApplet,
+  AppMain;
 
 begin
 end.

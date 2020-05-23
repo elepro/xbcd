@@ -237,6 +237,7 @@ function DllGetClassObject(const CLSID, IID: TGUID; var Obj): HResult; stdcall;
 function DllCanUnloadNow: HResult; stdcall;
 function CPlApplet(hWndCpl: HWnd; msg: Integer; lParam: longint;
   var NewCPLInfo: TNewCPLInfo): longint; stdcall;
+procedure AppMain;
 
 const
   FEATURE_CODE_SET_CONFIG = 3;
@@ -415,17 +416,17 @@ begin
   Result := S_OK;
 end;
 
-function ParseCompatibleIDs(SI: string): TInterfaceDesc;
+function ParseCompatibleIDs(SI: PAnsiChar): TInterfaceDesc;
 begin
-  Result.InterfaceClass := StrToInt('$' + SI[11] + SI[12]);
-  Result.InterfaceSubClass := StrToInt('$' + SI[23] + SI[24]);
-  Result.InterfaceProtocol := StrToInt('$' + SI[31] + SI[32]);
+  Result.InterfaceClass := StrToInt('$' + SI[10] + SI[11]);
+  Result.InterfaceSubClass := StrToInt('$' + SI[22] + SI[23]);
+  Result.InterfaceProtocol := StrToInt('$' + SI[30] + SI[31]);
 end;
 
 function EnumCallback(EnumDevice: PXBCD_Device): Integer;
 begin
   SetLength(strUSBDevicePath, intUSBCount + 1);
-  strUSBDevicePath[intUSBCount] := EnumDevice.USBPath;
+  strUSBDevicePath[intUSBCount] := PChar(EnumDevice.USBPath);
   SetLength(strDevicePath, intUSBCount + 1);
   strDevicePath[intUSBCount] := EnumDevice.HIDPath;
   MainForm.cmbDevices.AddItem('Gamepad ' + IntToStr(intUSBCount + 1), nil);
@@ -549,7 +550,7 @@ var
   lngReceived: longint;
   DeviceInterfaceData: TSPDeviceInterfaceData;
   DeviceInfoData: TSPDevInfoData;
-  CompatibleIDs: array[0..256] of Char;
+  CompatibleIDs: array[0..512] of AnsiChar;
   InterfaceDesc: TInterfaceDesc;
   MapTemp: array[0..23] of byte;
   ASTemp:  array[0..6] of byte;
@@ -1370,14 +1371,14 @@ begin
       ckbAxesOn[iCount].OnClick := ckbAxesOnClick;
     end;
 
-    ReadHandle := CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
+    ReadHandle := CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
       GENERIC_READ,
       FILE_SHARE_READ or FILE_SHARE_WRITE,
       nil,
       OPEN_EXISTING,
       FILE_FLAG_OVERLAPPED, 0);
 
-    HIDHandle := CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
+    HIDHandle := CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
       GENERIC_WRITE,
       FILE_SHARE_READ or FILE_SHARE_WRITE,
       nil,
