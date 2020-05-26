@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{282E47C8-1726-4FCC-A0F2-9D43983F3E74}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Setup Utility\XBCDSU.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="XBCD Interface\XBCDIF.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="XBCDSU">
+        <MSBuild Projects="Setup Utility\XBCDSU.dproj"/>
+    </Target>
+    <Target Name="XBCDSU:Clean">
+        <MSBuild Projects="Setup Utility\XBCDSU.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XBCDSU:Make">
+        <MSBuild Projects="Setup Utility\XBCDSU.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="XBCDIF">
+        <MSBuild Projects="XBCD Interface\XBCDIF.dproj"/>
+    </Target>
+    <Target Name="XBCDIF:Clean">
+        <MSBuild Projects="XBCD Interface\XBCDIF.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XBCDIF:Make">
+        <MSBuild Projects="XBCD Interface\XBCDIF.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="XBCDSU;XBCDIF"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="XBCDSU:Clean;XBCDIF:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="XBCDSU:Make;XBCDIF:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
