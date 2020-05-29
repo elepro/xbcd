@@ -416,7 +416,7 @@ begin
   Result := S_OK;
 end;
 
-function ParseCompatibleIDs(SI: AnsiString): TInterfaceDesc;
+function ParseCompatibleIDs(SI: string): TInterfaceDesc;
 begin
   Result.InterfaceClass := StrToInt('$' + SI[11] + SI[12]);
   Result.InterfaceSubClass := StrToInt('$' + SI[23] + SI[24]);
@@ -550,17 +550,19 @@ var
   lngReceived: longint;
   DeviceInterfaceData: TSPDeviceInterfaceData;
   DeviceInfoData: TSPDevInfoData;
-  CompatibleIDs: array[0..512] of AnsiChar;
+  CompatibleIDs: array[0..256] of Char;
   InterfaceDesc: TInterfaceDesc;
   MapTemp: array[0..23] of byte;
   ASTemp:  array[0..6] of byte;
+  Size: DWORD;
+  dataType: DWORD;
 begin
   USBGuid := StringToGUID('{A5DCBF10-6530-11D2-901F-00C04FB951ED}');
 
   if MyDeviceDetected = True then
   begin
     lngDeviceInfoSet := SetupDiGetClassDevs(Addr(USBGuid),
-      nil,
+      0,
       0,
       (DIGCF_PRESENT or
       DIGCF_DEVICEINTERFACE));
@@ -576,7 +578,7 @@ begin
         @DeviceInterfaceData,
         nil,
         0,
-        nil,
+        Size,
         @DeviceInfoData);
       KeyHandle := SetupDiOpenDevRegKey(lngDeviceInfoSet,
         DeviceInfoData,
@@ -585,12 +587,12 @@ begin
         DIREG_DEV, KEY_READ);
 
       SetupDiGetDeviceRegistryProperty(lngDeviceInfoSet,
-        @DeviceInfoData,
+        DeviceInfoData,
         SPDRP_COMPATIBLEIDS,
-        nil,
+        dataType,
         PByte(@CompatibleIDs[0]),
         SizeOf(CompatibleIDs),
-        nil);
+        size);
       InterfaceDesc := ParseCompatibleIDs(CompatibleIDs);
 
       if KeyHandle <> INVALID_HANDLE_VALUE then
@@ -1371,14 +1373,14 @@ begin
       ckbAxesOn[iCount].OnClick := ckbAxesOnClick;
     end;
 
-    ReadHandle := CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
+    ReadHandle := CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
       GENERIC_READ,
       FILE_SHARE_READ or FILE_SHARE_WRITE,
       nil,
       OPEN_EXISTING,
       FILE_FLAG_OVERLAPPED, 0);
 
-    HIDHandle := CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
+    HIDHandle := CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
       GENERIC_WRITE,
       FILE_SHARE_READ or FILE_SHARE_WRITE,
       nil,
@@ -1563,6 +1565,7 @@ var
   propchange: TSPPropChangeParams;
   bRestart: boolean;
   iTempVal: Integer;
+  Size: DWORD;
 begin
   if MyDeviceDetected = True then
   begin
@@ -1584,7 +1587,7 @@ begin
         @DeviceInterfaceData,
         nil,
         0,
-        nil,
+        Size,
         @DeviceInfoData);
       KeyHandle := SetupDiOpenDevRegKey(lngDeviceInfoSet,
         DeviceInfoData,
@@ -1755,7 +1758,7 @@ begin
         if iCount = cmbDevices.ItemIndex then
         begin
           ReadHandle :=
-            CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
+            CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
             GENERIC_READ,
             FILE_SHARE_READ or
             FILE_SHARE_WRITE, nil,
@@ -1765,7 +1768,7 @@ begin
             0);
 
           HIDHandle :=
-            CreateFile(PChar(string(PAnsiChar(strDevicePath[cmbDevices.ItemIndex]))),
+            CreateFile(PChar(strDevicePath[cmbDevices.ItemIndex]),
             GENERIC_WRITE,
             FILE_SHARE_READ or
             FILE_SHARE_WRITE, nil,
@@ -2340,6 +2343,11 @@ begin
   if cmbDevices.ItemIndex >= 0 then
     Gamepads[cmbDevices.ItemIndex].DevType :=
       cmbDevType.ItemIndex + HID_USAGE_JOYSTICK;
+end;
+
+initialization
+begin
+  LoadSetupApi();
 end;
 
 end.

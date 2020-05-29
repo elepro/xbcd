@@ -3,7 +3,7 @@ unit Main;
 interface
 
 uses
-  Windows, SysUtils, Hid, SetupApi,Vcl.Dialogs;
+  Windows, SysUtils, Hid, SetupApi, CfgMgr32, Vcl.Dialogs;
 
 Type
   TReadConfig = packed record
@@ -77,7 +77,7 @@ begin
      //an SP_DEVICE_INTERFACE_DATA structure returned by SetupDiEnumDeviceInterfaces.
      //*******************************************************************************
      DevInfoData.cbSize := sizeof(TSPDevInfoData);
-     SetupDiGetDeviceInterfaceDetail(DevInfoSet, DevInterfaceData, nil, 0, @Needed, DevInfoData);
+     SetupDiGetDeviceInterfaceDetail(DevInfoSet, DevInterfaceData, nil, 0, Needed, DevInfoData);
      If GetLastError = 122 Then
      begin
           DetailData := Needed;
@@ -89,7 +89,7 @@ begin
           //Call SetupDiGetDeviceInterfaceDetail again.
           //This time, pass the address of the first element of DetailDataBuffer
           //and the returned required buffer size in DetailData.
-          If SetupDiGetDeviceInterfaceDetail(DevInfoSet, DevInterfaceData, DevInterfaceDetailData, DetailData, @Needed, DevInfoData) Then
+          If SetupDiGetDeviceInterfaceDetail(DevInfoSet, DevInterfaceData, DevInterfaceDetailData, DetailData, Needed, DevInfoData) Then
           begin
                Result := True;
           end
@@ -119,9 +119,12 @@ var
    sDevProp: String;
    OSVer: TOSVersionInfo;
    Win98Old: Boolean;
+   DataType: DWORD;
+   Size: DWORD;
 begin
      Win98Old := False;
      OSVer.dwOSVersionInfoSize := sizeof(OSVer);
+
      If GetVersionEx(OSVer) Then
      begin
           If ((OSVer.dwMajorVersion = 4) And (OSVer.dwMinorVersion = 10) And (OSVer.dwBuildNumber And $FFFF < 2183)) Then
@@ -175,10 +178,10 @@ begin
           begin
                If GetDevInterfaceDetail(DevInfoSet, @HIDDevInterfaceData, HIDDevInterfaceDetailData, @HIDDevInfoData) Then
                begin
-                    If CM_Get_Parent(Addr(pDevInst), HIDDevInfoData.DevInst, 0) = 0 Then
+                    If CM_Get_Parent(pDevInst, HIDDevInfoData.DevInst, 0) = 0 Then
                     begin
                          sDeviceID := StringOfChar(#0, 255);
-                         If CM_Get_Device_IDA(pDevInst, PChar(sDeviceID), Length(sDeviceID), 0) = 0 Then
+                         If CM_Get_Device_ID(pDevInst, PChar(sDeviceID), Length(sDeviceID), 0) = 0 Then
                          begin
                               sDeviceID := Trim(sDeviceID);
 
@@ -187,19 +190,19 @@ begin
                                                     PChar(sDeviceID),
                                                     0,
                                                     DIOD_INHERIT_CLASSDRVS,
-                                                    @ParentDevInfoData);
+                                                    ParentDevInfoData);
 
                               sDevProp := StringOfChar(#0, 255);
 
                               If SetupDiGetDeviceRegistryProperty(DevInfoSet,
-                                                                  @ParentDevInfoData,
+                                                                  ParentDevInfoData,
                                                                   SPDRP_SERVICE,
-                                                                  nil,
+                                                                  DataType,
                                                                   PByte(sDevProp),
                                                                   Length(sDevProp),
-                                                                  nil) Then
+                                                                  Size) Then
                               begin
-                                   sDevProp := Trim(AnsiString(PAnsiChar(sDevProp)));
+                                   sDevProp := Trim(sDevProp);
                                    If UpperCase(sDevProp) = 'XBCD' Then
                                    begin
                                         ParentDevInterfaceData.cbSize := sizeof(ParentDevInterfaceData);
@@ -307,6 +310,12 @@ begin
           end;
           CloseHandle(HIDHandle);
      end;
+end;
+
+initialization
+begin
+     LoadSetupApi();
+     LoadConfigManagerApi();
 end;
 
 end.
