@@ -237,7 +237,6 @@ function DllGetClassObject(const CLSID, IID: TGUID; var Obj): HResult; stdcall;
 function DllCanUnloadNow: HResult; stdcall;
 function CPlApplet(hWndCpl: HWnd; msg: Integer; lParam: longint;
   var NewCPLInfo: TNewCPLInfo): longint; stdcall;
-procedure AppMain;
 
 const
   FEATURE_CODE_SET_CONFIG = 3;
@@ -1212,7 +1211,7 @@ begin
       ReadHandle := INVALID_HANDLE_VALUE;
 
       ReadHandle := CreateFile(
-        PChar(string(PAnsiChar(strDevicePath[MainForm.cmbDevices.ItemIndex]))),
+        PChar(strDevicePath[MainForm.cmbDevices.ItemIndex]),
         GENERIC_READ,
         FILE_SHARE_READ or
         FILE_SHARE_WRITE, nil,//Addr(Security),
@@ -1220,7 +1219,7 @@ begin
         FILE_FLAG_OVERLAPPED,
         0);
 
-      HIDHandle := CreateFile(PChar(string(PAnsiChar(strDevicePath[MainForm.cmbDevices.ItemIndex]))),
+      HIDHandle := CreateFile(PChar(strDevicePath[MainForm.cmbDevices.ItemIndex]),
         GENERIC_WRITE,
         FILE_SHARE_READ or
         FILE_SHARE_WRITE, nil,//Addr(Security),

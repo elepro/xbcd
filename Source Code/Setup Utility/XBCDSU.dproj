@@ -138,7 +138,7 @@
         <Debugger_HostApplication>C:\Windows\SysWOW64\rundll32.exe</Debugger_HostApplication>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <DCC_UnitSearchPath>..\JEDI\jwa\Common;..\JEDI\jwa\Win32Api;..\JEDI\jwa\Includes;..\JEDI\jwa\SaCMAPI</DCC_UnitSearchPath>
-        <Debugger_CWD>C:\Users\avata\source\repos\elepro\xbcd\Source Code\Win32\Debug</Debugger_CWD>
+        <Debugger_CWD>..\Win32\Debug</Debugger_CWD>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>

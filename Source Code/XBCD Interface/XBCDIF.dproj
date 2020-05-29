@@ -116,7 +116,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <Debugger_RunParams> xbcdsu.dll,AppMain</Debugger_RunParams>
         <Debugger_HostApplication>C:\Windows\SysWOW64\rundll32.exe</Debugger_HostApplication>
-        <Debugger_CWD>C:\Users\avata\source\repos\elepro\xbcd\Source Code\Win32\Debug</Debugger_CWD>
+        <Debugger_CWD>..\Win32\Debug</Debugger_CWD>
         <DCC_UnitSearchPath>..\JEDI\jwa\Common;..\JEDI\jwa\Win32Api;..\JEDI\jwa\Includes;..\JEDI\jwa\SaCMAPI;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <ItemGroup>

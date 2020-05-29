@@ -9,12 +9,11 @@
 /Source Code/XBCD Driver/XBCD/Debug
 **/.vs
 **/.svn
+**/__history
+**/__recovery
 /Source Code/Setup Utility/Win32
 /Source Code/Win32/Release
 /Source Code/XBCD Interface/Win32
-/Source Code/XBCD Interface/__history
-/Source Code/XBCD Interface/rundll32.exe
-/Source Code/XBCD Interface/rundll32_64.exe
 /Source Code/XBCD Interface/XBCDIF.identcache
 /Source Code/XBCD Interface/XBCDIF.dproj.local
 /Source Code/XBCD Interface/XBCDIF.res
@@ -23,7 +22,6 @@
 /Source Code/XBCD Rumble/MSVC14/Debug
 /Source Code/XBCD Rumble/MSVC14/Release
 /Source Code/Setup Utility/Win32/Debug
-/Source Code/Setup Utility/__history
 /Source Code/Setup Utility/XBCDSU.identcache
 /Source Code/Setup Utility/XBCDSU.dproj.local
 /Source Code/Win32
@@ -31,5 +29,4 @@
 /Source Code/XBCD Rumble/MSVC14/XBCDR.APS
 /Source Code/XBCD Interface/Win64
 /Source Code/Win64
-/Source Code/Setup Utility/rundll32.exe
 /Source Code/XBCD.groupproj.local
