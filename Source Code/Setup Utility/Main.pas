@@ -237,6 +237,7 @@ function DllGetClassObject(const CLSID, IID: TGUID; var Obj): HResult; stdcall;
 function DllCanUnloadNow: HResult; stdcall;
 function CPlApplet(hWndCpl: HWnd; msg: Integer; lParam: longint;
   var NewCPLInfo: TNewCPLInfo): longint; stdcall;
+procedure AppMain;
 
 const
   FEATURE_CODE_SET_CONFIG = 3;

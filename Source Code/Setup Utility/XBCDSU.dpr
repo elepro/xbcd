@@ -11,7 +11,8 @@ uses
 exports
   DllGetClassObject,
   DllCanUnloadNow,
-  CPLApplet;
+  CPLApplet,
+  AppMain;
 
 begin
 end.
