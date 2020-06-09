@@ -9,6 +9,9 @@
         <Projects Include="XBCD Interface\XBCDIF.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="SetupUtility Exe\XBCDSUtil.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="XBCDIF:Make">
         <MSBuild Projects="XBCD Interface\XBCDIF.dproj" Targets="Make"/>
     </Target>
+    <Target Name="XBCDSUtil">
+        <MSBuild Projects="SetupUtility Exe\XBCDSUtil.dproj"/>
+    </Target>
+    <Target Name="XBCDSUtil:Clean">
+        <MSBuild Projects="SetupUtility Exe\XBCDSUtil.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XBCDSUtil:Make">
+        <MSBuild Projects="SetupUtility Exe\XBCDSUtil.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="XBCDSU;XBCDIF"/>
+        <CallTarget Targets="XBCDSU;XBCDIF;XBCDSUtil"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="XBCDSU:Clean;XBCDIF:Clean"/>
+        <CallTarget Targets="XBCDSU:Clean;XBCDIF:Clean;XBCDSUtil:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="XBCDSU:Make;XBCDIF:Make"/>
+        <CallTarget Targets="XBCDSU:Make;XBCDIF:Make;XBCDSUtil:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

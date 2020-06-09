@@ -314,7 +314,7 @@ uses
   HID, SetupApi, XBCDIF, CAssign, StrUtils, SysUtils, MixedColor, IniFiles;
 
 procedure AppMain;
-  
+
   function EnumWndProc(hwnd: THandle; Param: Cardinal): Bool; stdcall;
   var
     ClassName, WinModuleName: string;
@@ -740,6 +740,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   iCount: Integer;
   tComp:  TComponent;
+  dpi: Integer;
 begin
   SetDesktopIconFonts(Font);
   Icon.Handle := LoadIcon(HInstance, 'MAINICON');
@@ -754,13 +755,15 @@ begin
   pnlRx.DoubleBuffered := True;
   pnlRy.DoubleBuffered := True;
 
+  dpi := Screen.MonitorFromWindow(MainForm.Handle).PixelsPerInch;
+
   for iCount := 0 to 23 do
   begin
     tComp := FindComponent('imgBtn' + IntToStr(iCount));
     picWBtn[iCount] := TImage(tComp);
     with picWBtn[iCount].Canvas do begin
       Brush.Color := clDkNavy;
-      Ellipse(0, 0, 24, 24);
+      Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
       Font.Name := 'MS Sans Serif';
       Font.Color := clWhite;
     end;
@@ -772,7 +775,7 @@ begin
     picXBtn[iCount] := TImage(tComp);
     with picXBtn[iCount].Canvas do begin
       Brush.Color := clDkNavy;
-      Ellipse(0, 0, 24, 24);
+      Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
       Font.Name := 'MS Sans Serif';
       Font.Color := clWhite;
     end;
@@ -921,9 +924,9 @@ end;
 
 procedure TMainForm.ReadReport;
 
-  procedure DrawBtnLbl(Canvas: TCanvas; const T: string); {$IFDEF VER180} inline; {$ENDIF}
+  procedure DrawBtnLbl(Canvas: TCanvas; const T: string; Width: Integer; Height: Integer); {$IFDEF VER180} inline; {$ENDIF}
   begin
-    with Canvas do TextOut(11 - TextWidth(T) div 2, 5, T);
+    with Canvas do TextOut(Trunc((Width - TextWidth(T)) div 2), Trunc((Height - TextHeight(T)) div 2), T);
   end;
 
   function DBtnDown(Data, Button: Integer): Boolean; {$IFDEF VER180} inline; {$ENDIF}
@@ -942,6 +945,8 @@ var
   intPOVCount: Integer;
   iRetVal: Integer;
   pDevice: PGamepad;
+  dpi: Integer;
+  bitmap: TBitmap;
 const
   {$J+}
   OldBuffer: TReport = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1005,6 +1010,19 @@ begin
       // Display the driver's active profile
       txtActiveProfile.Caption := IntToStr(ReadBuffer[19]);
 
+      dpi := Screen.MonitorFromWindow(MainForm.Handle).PixelsPerInch;
+
+      // for DPI Aware
+      for iCount := Low(picXBtn) to High(picXBtn) do begin
+        bitmap:= TBitmap.Create;
+        bitmap.Width:= picXBtn[iCount].Width;
+        bitmap.Height:= picXBtn[iCount].height;
+        picXBtn[iCount].Picture.Bitmap:= bitmap;
+        bitmap.Free;
+        bitmap := nil;
+        picXBtn[iCount].Canvas.Font.Color := clWhite;
+      end;
+
       if tabXbox.Showing then
       begin
         pDevice := @Gamepads[cmbDevices.ItemIndex];
@@ -1013,7 +1031,7 @@ begin
           // X360 digital buttons
           intButtons := ReadBuffer[23] shr 4;
           for iCount := 0 to 5 do begin
-            if iCount = 4 then intButtons := ReadBuffer[23] and $F;                       
+            if iCount = 4 then intButtons := ReadBuffer[23] and $F;
             if DBtnDown(intButtons, iCount mod 4) then
               picXBtn[iCount].Canvas.Brush.Color := clBlue
             else
@@ -1025,9 +1043,12 @@ begin
               GetMixedColor(clDkNavy, clBlue, 0, ReadBuffer[18+iCount], $FF);
         end else
           for iCount := 0 to 7 do
-            picXBtn[iCount].Canvas.Brush.Color :=
-              GetMixedColor(clDkNavy, clBlue, 0, ReadBuffer[24+iCount], $FF);
-
+            begin
+              picXBtn[iCount].Canvas.Brush.Color :=
+                GetMixedColor(clDkNavy, clBlue, 0, ReadBuffer[24+iCount], $FF);
+              picXBtn[iCount].Canvas.Font.Name := 'MS Sans Serif';
+              picXBtn[iCount].Canvas.Font.Color := clWhite;
+            end;
         intButtons := ReadBuffer[22] shr 4;
         for iCount := 8 to 11 do
           if DBtnDown(intButtons, iCount mod 4) then
@@ -1036,11 +1057,13 @@ begin
             picXBtn[iCount].Canvas.Brush.Color := clDkNavy;
 
         for iCount := 0 to 11 do begin
-          picXBtn[iCount].Canvas.Ellipse(0, 0, 24, 24);
+          picXBtn[iCount].Canvas.Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
+          picXBtn[iCount].Width := Trunc(24 * (dpi / 96));
+          picXBtn[iCount].Height := Trunc(24 * (dpi / 96));
           if pDevice.is360 then
-            DrawBtnLbl(picXBtn[iCount].Canvas, X360Labels[iCount])
+            DrawBtnLbl(picXBtn[iCount].Canvas, X360Labels[iCount], picXBtn[iCount].Width, picXBtn[iCount].Height)
           else
-            DrawBtnLbl(picXBtn[iCount].Canvas, XboxLabels[iCount]);
+            DrawBtnLbl(picXBtn[iCount].Canvas, XboxLabels[iCount], picXBtn[iCount].Width, picXBtn[iCount].Height);
         end;
 
         intButtons := ReadBuffer[22] and $F;
@@ -1084,8 +1107,16 @@ begin
           IntToHex(ReadBuffer[2], 2) + IntToHex(ReadBuffer[1], 2));
 
         intButtons := StrToInt('$' + ByteValue);
-        for iCount := 0 to 23 do
+        for iCount := Low(picWBtn) to High(picWBtn) do
         begin
+          bitmap:= TBitmap.Create;
+          bitmap.Width:= picWBtn[iCount].Width;
+          bitmap.Height:= picWBtn[iCount].height;
+          picWBtn[iCount].Picture.Bitmap:= bitmap;
+          bitmap.Free;
+          bitmap := nil;
+          picWBtn[iCount].Canvas.Font.Color := clWhite;
+
           if DBtnDown(intButtons, iCount) then
           begin
             if iCount < Gamepads[cmbDevices.ItemIndex].iButtonsOld then
@@ -1101,8 +1132,10 @@ begin
               picWBtn[iCount].Canvas.Brush.Color := clMaroon;
           end;
 
-          picWBtn[iCount].Canvas.Ellipse(0, 0, 24, 24);
-          DrawBtnLbl(picWBtn[iCount].Canvas, IntToStr(iCount + 1));
+          picWBtn[iCount].Canvas.Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
+          picWBtn[iCount].Width := Trunc(24 * (dpi / 96));
+          picWBtn[iCount].Height := Trunc(24 * (dpi / 96));
+          DrawBtnLbl(picWBtn[iCount].Canvas, IntToStr(iCount + 1), picWBtn[iCount].Width, picWBtn[iCount].Height);
         end;
 
         DispAxis(imgX, ReadBuffer[5], -1);
@@ -1275,6 +1308,7 @@ end;
 procedure TMainForm.cmbDevicesChange(Sender: TObject);
 var
   iCount: Integer;
+  dpi: Integer;
 begin
   trkRumble[0].Position := 0;
   trkRumble[1].Position := 0;
@@ -1457,6 +1491,7 @@ begin
     txtTThreshold.Caption := '10';
     txtAThreshold.Caption := '100';
 
+    dpi := Screen.MonitorFromWindow(MainForm.Handle).PixelsPerInch;
     for iCount := 0 to 6 do
     begin
       udScale[iCount].Enabled  := False;
@@ -1472,12 +1507,12 @@ begin
 
     for iCount := 0 to 23 do
     begin
-      picWBtn[iCount].Canvas.Ellipse(0, 0, 24, 24);
+      picWBtn[iCount].Canvas.Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
     end;
 
     for iCount := 0 to 11 do
     begin
-      picXBtn[iCount].Canvas.Ellipse(0, 0, 24, 24);
+      picXBtn[iCount].Canvas.Ellipse(0, 0, Trunc(24 * (dpi / 96)), Trunc(24 * (dpi / 96)));
     end;
 
     cmbProfiles.Enabled := False;
@@ -1840,7 +1875,7 @@ begin
 
   if cmbDevices.Items.Count > 0 then
     cmbDevices.ItemIndex := 0;
-  
+
   cmbDevices.OnChange(nil);
 
   cmdRefresh.Enabled := True;
